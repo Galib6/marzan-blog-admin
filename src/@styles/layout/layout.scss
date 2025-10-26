@@ -1,0 +1,86 @@
+.ant-page-header {
+    padding: 10px;
+    padding-top: 0;
+    margin-bottom: 20px;
+    font-size: 16px;
+    .ant-page-header-heading {
+      padding-bottom: 10px;
+      border-bottom: 1px solid #dddddd59;
+  
+      .ant-page-header-back {
+        .ant-page-header-back-button {
+          height: 30px;
+          width: 30px;
+          background-color: var(--primary-color) !important;
+          font-size: 16px;
+          border-radius: 4px !important;
+          display: flex !important;
+          justify-content: center;
+          align-items: center;
+          cursor: pointer;
+          color: #fff;
+        }
+      }
+      .ant-page-header-back svg {
+        color: #fff;
+      }
+      .ant-page-header-back-button {
+        font-size: 17px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: -4px;
+      }
+    }
+  }
+  
+  .ant-table {
+    .ant-table-content {
+      overflow-x: auto;
+      @media (max-width: 1200px) {
+        max-width: 1140px;
+        overflow-x: auto;
+      }
+    }
+    .ant-table-thead {
+      tr {
+        th {
+          text-transform: capitalize;
+        }
+      }
+    }
+  }
+  
+  // .ant-tooltip-inner {
+  //   a {
+  //     color: #fff;
+  //   }
+  // }
+  
+  .ant-form {
+    .ant-form-item {
+      margin-bottom: 20px;
+      .ant-form-item-label {
+        margin: 0 !important;
+        padding: 0 !important;
+        label {
+          text-transform: capitalize;
+        }
+      }
+    }
+  }
+  
+  // .data-query-form {
+  //   .ant-form {
+  //     .ant-form-item {
+  //       .ant-form-item-label {
+  //         margin: 0 !important;
+  //         padding: 0 !important;
+  //         label {
+  //           height: 0 !important;
+  //         }
+  //       }
+  //     }
+  //   }
+  // }
+  
