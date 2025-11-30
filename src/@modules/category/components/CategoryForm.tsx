@@ -1,6 +1,5 @@
 'use client';
 
-import FilePreviewer from '@base/components/FilePreviewer';
 import { Button, Col, Form, FormInstance, Input, InputNumber, Radio, Row } from 'antd';
 import { useEffect, useState } from 'react';
 import { ICategoryCreate } from '../lib/interfaces';
@@ -52,9 +51,18 @@ const CategoryForm: React.FC<IProps> = ({ form, initialValues, onFinish, onFinis
           </Form.Item>
         </Col>
 
-        <Col xs={24} sm={24} md={24}>
-          <Form.Item label="orderPriority" name="orderPriority">
-            <InputNumber className="w-full" placeholder="Enter order priority" />
+        <Col span={24}>
+          <Form.Item
+            label="Slug"
+            name="slug"
+            rules={[
+              {
+                required: true,
+                message: 'Please enter a slug!',
+              },
+            ]}
+          >
+            <Input placeholder="Enter a slug" />
           </Form.Item>
         </Col>
 
@@ -64,20 +72,9 @@ const CategoryForm: React.FC<IProps> = ({ form, initialValues, onFinish, onFinis
           </Form.Item>
         </Col>
 
-        <Col span={24}>
-          <Form.Item
-            name="image"
-            label={
-              <p>
-                flag(255x180) (<span className="text-red-500">jpeg, png, svg - less than 2MB</span>)
-              </p>
-            }
-          >
-            <div className="flex gap-4 items-center">
-              <div className="uploaded-image-view">
-                <FilePreviewer src={image || initialValues?.image} alt="icon" />
-              </div>
-            </div>
+        <Col xs={24} sm={24} md={24}>
+          <Form.Item label="orderPriority" name="orderPriority">
+            <InputNumber style={{ width: '100%' }} className="w-full" placeholder="Enter order priority" />
           </Form.Item>
         </Col>
 

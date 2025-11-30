@@ -1,33 +1,31 @@
-import { FlatCompat } from '@eslint/eslintrc';
 import pluginTanstackQuery from '@tanstack/eslint-plugin-query';
 import pluginTypescript from '@typescript-eslint/eslint-plugin';
 import parserTypescript from '@typescript-eslint/parser';
 import pluginUnusedImports from 'eslint-plugin-unused-imports';
-import { dirname } from 'path';
-import { fileURLToPath } from 'url';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
-const compat = new FlatCompat({
-  baseDirectory: __dirname,
-});
+import pluginReact from 'eslint-plugin-react';
+import pluginReactHooks from 'eslint-plugin-react-hooks';
 
 const eslintConfig = [
-  ...compat.extends('next/core-web-vitals', 'plugin:@typescript-eslint/recommended'),
   {
     files: ['**/*.ts', '**/*.tsx'],
     languageOptions: {
       parser: parserTypescript,
+      parserOptions: {
+        ecmaVersion: 'latest',
+        sourceType: 'module',
+      },
     },
     plugins: {
       '@typescript-eslint': pluginTypescript,
       'unused-imports': pluginUnusedImports,
       '@tanstack/query': pluginTanstackQuery,
+      react: pluginReact,
+      'react-hooks': pluginReactHooks,
     },
     rules: {
       '@next/next/no-img-element': 'off',
       'react/no-unescaped-entities': 'off',
+      'react/react-in-jsx-scope': 'off',
       '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/no-unused-vars': 'off',
       '@typescript-eslint/no-empty-object-type': 'off',
@@ -45,6 +43,7 @@ const eslintConfig = [
       '@tanstack/query/exhaustive-deps': 'error',
       '@tanstack/query/no-rest-destructuring': 'warn',
       '@tanstack/query/stable-query-client': 'error',
+      'react-hooks/exhaustive-deps': 'warn',
     },
   },
   {

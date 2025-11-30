@@ -1,34 +1,35 @@
 'use client';
 
-import { Button, Drawer, Form, PaginationProps, Popconfirm, Space, Switch, Table } from 'antd';
+import { Button, Drawer, Form, Image, PaginationProps, Popconfirm, Space, Switch, Table } from 'antd';
+import Link from 'next/link';
 import React, { useState } from 'react';
-import { AiFillDelete, AiFillEdit } from 'react-icons/ai';
-import { useDeleteCategory, useUpdateCategory } from '../lib/hooks';
+import { AiFillDelete, AiFillEdit, AiOutlineFileText } from 'react-icons/ai';
+import { useDeleteArticle, useUpdateArticle } from '../lib/hooks';
 
 import { ColumnsType } from 'antd/es/table';
-import CategoryForm from './CategoryForm';
+import ArticleForm from './ArticleForm';
 
 import EditableInput from '@base/components/EditableInput';
 import EditableInputNumber from '@base/components/EditableInputNumber';
 import { Permissions } from '@lib/constant';
 import { getAccess } from '@modules/auth/lib/utils/client';
-import { ICategory } from '../lib/interfaces';
-import { CategoryService } from '../lib/service';
+import { IArticle } from '../lib/interfaces';
+import { ArticleService } from '../lib/service';
 
 interface IProps {
-  data?: ICategory[];
+  data?: IArticle[];
   loading: boolean;
   pagination?: PaginationProps;
 }
-const CategoryList: React.FC<IProps> = ({ data, loading, pagination }) => {
+const ArticleList: React.FC<IProps> = ({ data, loading, pagination }) => {
   const [form] = Form.useForm();
 
-  // Category delete functionalities
-  const deleteCategory = useDeleteCategory();
+  // Article delete functionalities
+  const deleteArticle = useDeleteArticle();
 
-  // Category update functionalities
-  const [updateItem, setUpdateItem] = useState<ICategory>(null);
-  const updateCategory = useUpdateCategory({
+  // Article update functionalities
+  const [updateItem, setUpdateItem] = useState<IArticle>(null);
+  const updateArticle = useUpdateArticle({
     config: {
       onSuccess: (res) => {
         if (!res?.success) return;
@@ -38,30 +39,42 @@ const CategoryList: React.FC<IProps> = ({ data, loading, pagination }) => {
     },
   });
 
-  // Category table data source config
+  // Article table data source config
   const dataSource = data?.map((x) => ({
     key: x.id,
     id: x.id,
-    image: x.image,
+    thumb: x.thumb,
     title: x.title,
+    name: x.name,
     orderPriority: x.orderPriority,
-    description: x.description,
+    summary: x.summary,
     isActive: x.isActive.toString(),
   }));
 
   const columns: ColumnsType = [
     {
+      title: 'Thumb',
+      dataIndex: 'thumb',
+      key: 'thumb',
+      render: (thumb) => <Image src={thumb} width={50} />,
+    },
+    {
+      title: 'Name',
+      dataIndex: 'name',
+      key: 'name',
+    },
+    {
       title: 'Title',
       dataIndex: 'title',
       key: 'title',
-      render: (title, record: ICategory) => {
+      render: (title, record: IArticle) => {
         return (
           <EditableInput
             value={title}
             placeholder="Write some thing"
             onBlur={(e) => {
               if (e.target.value === title) return;
-              updateCategory.mutateAsync({
+              updateArticle.mutateAsync({
                 id: record.id,
                 data: {
                   title: e.target.value,
@@ -74,22 +87,22 @@ const CategoryList: React.FC<IProps> = ({ data, loading, pagination }) => {
     },
 
     {
-      title: 'description',
-      dataIndex: 'description',
-      key: 'description',
+      title: 'Summary',
+      dataIndex: 'summary',
+      key: 'summary',
     },
     {
       title: 'Is Active',
       dataIndex: 'isActive',
       key: 'isActive',
-      render(isActive, record: ICategory) {
+      render(isActive, record: IArticle) {
         return (
           <div className="flex gap-2">
             <span>{isActive}</span>
             <Switch
               checked={isActive.toLowerCase() === 'true'}
               onChange={(checked) => {
-                updateCategory.mutateAsync({
+                updateArticle.mutateAsync({
                   id: record?.id,
                   data: {
                     isActive: checked,
@@ -105,14 +118,14 @@ const CategoryList: React.FC<IProps> = ({ data, loading, pagination }) => {
       title: 'orderPriority',
       dataIndex: 'orderPriority',
       key: 'orderPriority',
-      render: (orderPriority, record: ICategory) => {
+      render: (orderPriority, record: IArticle) => {
         return (
           <EditableInputNumber
             value={orderPriority}
             placeholder="Order Priority"
             onBlur={(value) => {
               if (value === orderPriority) return;
-              updateCategory.mutateAsync({
+              updateArticle.mutateAsync({
                 id: record.id,
                 data: {
                   orderPriority: +value,
@@ -130,10 +143,15 @@ const CategoryList: React.FC<IProps> = ({ data, loading, pagination }) => {
       align: 'center',
       render: (id: string) => (
         <Space>
+          <Link href={`/admin/article/${id}/content`}>
+            <Button style={{ fontSize: 20, borderRadius: 5 }}>
+              <AiOutlineFileText />
+            </Button>
+          </Link>
           <Button
             style={{ fontSize: 20, borderRadius: 5 }}
             onClick={async () => {
-              const data = await CategoryService.filterById(id);
+              const data = await ArticleService.filterById(id);
               setUpdateItem(data?.data);
             }}
           >
@@ -141,7 +159,7 @@ const CategoryList: React.FC<IProps> = ({ data, loading, pagination }) => {
           </Button>
           <Popconfirm
             title="Are you sure to delete it?"
-            onConfirm={() => getAccess([Permissions.FORBIDDEN], () => deleteCategory.mutate(id))}
+            onConfirm={() => getAccess([Permissions.FORBIDDEN], () => deleteArticle.mutate(id))}
             okText="Yes"
             cancelText="No"
             okButtonProps={{ danger: true }}
@@ -154,25 +172,26 @@ const CategoryList: React.FC<IProps> = ({ data, loading, pagination }) => {
       ),
     },
   ];
-  // Category table data source config end
+  // Article table data source config end
 
   return (
     <React.Fragment>
       <Table loading={loading} columns={columns} dataSource={dataSource} pagination={pagination} />
       <Drawer
-        title="Update this Category"
+        size={900}
+        title="Update this Article"
         open={updateItem?.id ? true : false}
-        onClose={() => setUpdateItem({} as ICategory)}
+        onClose={() => setUpdateItem({} as IArticle)}
       >
-        <CategoryForm
+        <ArticleForm
           form={form}
           initialValues={updateItem}
-          loading={updateCategory.isPending}
-          onFinish={(values) => updateCategory.mutateAsync({ id: updateItem?.id, data: values })}
+          loading={updateArticle.isPending}
+          onFinish={(values) => updateArticle.mutateAsync({ id: updateItem?.id, data: values })}
         />
       </Drawer>
     </React.Fragment>
   );
 };
 
-export default CategoryList;
+export default ArticleList;

@@ -25,9 +25,14 @@ const MainMenu: React.FC<IProps> = ({ className, selectedKeys, openKeys, onOpenC
       onOpenChange={onOpenChange}
       items={getRbacMenuItems([
         {
-          key: Paths.admin.root,
+          key: Paths.admin.category.list,
           icon: <FaLightbulb />,
-          label: <CustomLink href={Paths.admin.category.list}>Visa Category</CustomLink>,
+          label: <CustomLink href={Paths.admin.category.list}>Category</CustomLink>,
+        },
+        {
+          key: Paths.admin.article.list,
+          icon: <FaLightbulb />,
+          label: <CustomLink href={Paths.admin.article.list}>Articles</CustomLink>,
         },
         // {
         //   key: Paths.admin.countries.list,
@@ -42,7 +47,7 @@ const MainMenu: React.FC<IProps> = ({ className, selectedKeys, openKeys, onOpenC
         //   icon: <FaPassport />,
         //   label: (
         //     <CustomLink href={Toolbox.appendPagination(Paths.admin.visaCategories.list)}>
-        //       Visa Categories
+        //       Categories
         //     </CustomLink>
         //   ),
         //   allowedAccess: [Permissions.VISA_CATEGORY_VIEW],

@@ -34,5 +34,9 @@ export const Paths = {
       root: '/admin/category',
       list: '/admin/category/list',
     },
+    article: {
+      root: '/admin/article',
+      list: '/admin/article/list',
+    },
   },
 };

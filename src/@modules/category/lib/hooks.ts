@@ -1,8 +1,8 @@
 import { MutationConfig, queryClient, QueryConfig } from '@lib/config';
 
 import { IBaseFilter } from '@base/interfaces';
-import { useMutation, useQuery } from '@tanstack/react-query';
-import { notification } from 'antd';
+import { useInfiniteQuery, useMutation, useQuery } from '@tanstack/react-query';
+import { ICategoriesResponse } from './interfaces';
 import { CategoryService } from './service';
 
 //---------------- useCategorys hook ------------------------------------
@@ -43,9 +43,6 @@ export const useCreateCategory = ({ config }: IUseCreateCategory = {}) => {
     onSettled: (res) => {
       if (!res?.success) return;
       queryClient.invalidateQueries({ queryKey: [CategoryService.NAME] });
-      notification.success({
-        message: res?.message,
-      });
     },
   });
 };
@@ -62,9 +59,6 @@ export const useUpdateCategory = ({ config }: IUseUpdateCategory = {}) => {
     onSettled: (res) => {
       if (!res?.success) return;
       queryClient.invalidateQueries({ queryKey: [CategoryService.NAME] });
-      notification.success({
-        message: res?.message,
-      });
     },
   });
 };
@@ -81,9 +75,26 @@ export const useDeleteCategory = ({ config }: IUseDeleteCategory = {}) => {
     onSuccess: (res) => {
       if (!res?.success) return;
       queryClient.invalidateQueries({ queryKey: [CategoryService.NAME] });
-      notification.success({
-        message: 'Successfully deleted',
-      });
+    },
+  });
+};
+
+//---------------- useInfiniteCategories hook ------------------------------------
+type IUseInfiniteCategories = {
+  options: IBaseFilter;
+  config?: any;
+};
+
+export const useInfiniteCategories = ({ options, config }: IUseInfiniteCategories) => {
+  return useInfiniteQuery<ICategoriesResponse>({
+    ...config,
+    initialPageParam: 1,
+    queryKey: [CategoryService.NAME, 'infinite', options],
+    queryFn: ({ pageParam = 1 }) => CategoryService.filter({ ...options, page: pageParam as number }),
+    getNextPageParam: (lastPage) => {
+      return lastPage.meta.page < Math.ceil(lastPage.meta.total / lastPage.meta.limit)
+        ? lastPage.meta.page + 1
+        : undefined;
     },
   });
 };

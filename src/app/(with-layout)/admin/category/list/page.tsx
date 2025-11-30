@@ -21,7 +21,11 @@ const CategoryPage = () => {
   const searchParams = useSearchParams();
   const [createFormInstance] = Form.useForm();
 
-  const { page, limit, searchTerm } = Toolbox.parseQueryParams<IBaseFilter>(`?${searchParams.toString()}`);
+  const {
+    page = 1,
+    limit = 10,
+    searchTerm,
+  } = Toolbox.parseQueryParams<IBaseFilter>(`?${searchParams.toString()}`);
 
   // query functionalities
   const { isLoading, data } = useCategories({
@@ -50,11 +54,11 @@ const CategoryPage = () => {
       {messageCtx}
 
       <PageHeader
-        title="Visa Category List"
+        title="Category List"
         subTitle={<BaseSearch />}
         tags={[<Tag key={1}>Total items: {data?.meta?.total}</Tag>]}
         extra={[
-          <Authorization key="1" allowedAccess={[Permissions.VISA_CATEGORY_CREATE]}>
+          <Authorization key="1" allowedAccess={[Permissions.CATEGORY_CREATE]}>
             <Button key="1" type="primary" onClick={() => setDrawerOpen(true)}>
               Create
             </Button>
@@ -81,7 +85,7 @@ const CategoryPage = () => {
       />
       <Drawer
         width={600}
-        title="Create a new Visa Category"
+        title="Create a new Category"
         open={isDrawerOpen}
         onClose={() => setDrawerOpen(false)}
       >
@@ -97,5 +101,5 @@ const CategoryPage = () => {
 };
 
 export default WithAuthorization(CategoryPage, {
-  allowedAccess: [Permissions.VISA_CATEGORY_VIEW],
+  allowedAccess: [Permissions.CATEGORY_VIEW],
 });

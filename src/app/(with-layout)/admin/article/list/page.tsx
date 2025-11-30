@@ -5,35 +5,41 @@ import PageHeader from '@base/components/PageHeader';
 import { IBaseFilter } from '@base/interfaces';
 import { Permissions } from '@lib/constant';
 import { Toolbox } from '@lib/utils';
+import ArticleForm from '@modules/article/components/ArticleForm';
+import ArticleList from '@modules/article/components/ArticleList';
+import { useArticles, useCreateArticle } from '@modules/article/lib/hooks';
+
 import Authorization from '@modules/auth/components/Authorization';
 import WithAuthorization from '@modules/auth/components/WithAuthorization';
-import CountriesForm from '@modules/countries/components/CountriesForm';
-import CountriesList from '@modules/countries/components/CountriesList';
-import { useCountries, useCountryCreate } from '@modules/countries/lib/hooks';
+
 import { Button, Drawer, Form, Tag, message } from 'antd';
 import { useRouter, useSearchParams } from 'next/navigation';
 import React, { useState } from 'react';
 
-const CountriesPage = () => {
+const ArticlePage = () => {
   const [messageApi, messageCtx] = message.useMessage();
   const router = useRouter();
   const searchParams = useSearchParams();
   const [createFormInstance] = Form.useForm();
 
-  const { page, limit, searchTerm } = Toolbox.parseQueryParams<IBaseFilter>(`?${searchParams.toString()}`);
+  const {
+    page = 1,
+    limit = 10,
+    searchTerm,
+  } = Toolbox.parseQueryParams<IBaseFilter>(`?${searchParams.toString()}`);
 
   // query functionalities
-  const { isLoading, data } = useCountries({
+  const { isLoading, data } = useArticles({
     options: {
-      page: page,
-      limit: limit,
+      page: page || 1,
+      limit: limit || 10,
       searchTerm: searchTerm,
     },
   });
 
-  // Country create functionalities
+  // Article create functionalities
   const [isDrawerOpen, setDrawerOpen] = useState<boolean>(false);
-  const createCountry = useCountryCreate({
+  const createArticle = useCreateArticle({
     config: {
       onSuccess: (res) => {
         if (!res?.success) return;
@@ -49,18 +55,18 @@ const CountriesPage = () => {
       {messageCtx}
 
       <PageHeader
-        title="Country List"
+        title="Article List"
         subTitle={<BaseSearch />}
         tags={[<Tag key={1}>Total items: {data?.meta?.total}</Tag>]}
         extra={[
-          <Authorization key="1" allowedAccess={[Permissions.COUNTRY_CREATE]}>
+          <Authorization key="1" allowedAccess={[Permissions.ARTICLE_CREATE]}>
             <Button key="1" type="primary" onClick={() => setDrawerOpen(true)}>
               Create
             </Button>
           </Authorization>,
         ]}
       />
-      <CountriesList
+      <ArticleList
         loading={isLoading}
         data={data?.data}
         pagination={{
@@ -78,18 +84,23 @@ const CountriesPage = () => {
           },
         }}
       />
-      <Drawer title="Create a new Country" open={isDrawerOpen} onClose={() => setDrawerOpen(false)}>
-        <CountriesForm
+      <Drawer
+        width={600}
+        title="Create a new Article"
+        open={isDrawerOpen}
+        onClose={() => setDrawerOpen(false)}
+      >
+        <ArticleForm
           form={createFormInstance}
           initialValues={{ isActive: true, orderPriority: 0 }}
-          loading={createCountry.isPending}
-          onFinish={async (values) => createCountry.mutateAsync(values)}
+          loading={createArticle.isPending}
+          onFinish={async (values) => createArticle.mutateAsync(values)}
         />
       </Drawer>
     </React.Fragment>
   );
 };
 
-export default WithAuthorization(CountriesPage, {
-  allowedAccess: [Permissions.COUNTRY_VIEW],
+export default WithAuthorization(ArticlePage, {
+  allowedAccess: [Permissions.ARTICLE_VIEW],
 });
