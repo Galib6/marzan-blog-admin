@@ -1,16 +1,38 @@
-export const paths = {
+import { TId } from '@base/interfaces';
+
+export const Paths = {
   root: '/',
-  articleCategory: {
-    root: '/category',
-    list: '/category/list',
-  },
-  article: {
-    root: '/article',
-    list: '/article/list',
-  },
+  initiate: '/initiate',
+  underConstruction: '/under-construction',
   auth: {
-    login: '/auth/login',
-    register: '/auth/register',
-    forgotPass: '/auth/forgot-password',
+    signIn: '/auth',
+  },
+  admin: {
+    root: '/admin',
+    users: {
+      root: '/admin/users',
+      list: '/admin/users/list',
+    },
+
+    roleManager: {
+      root: '/admin/role-manager',
+      permissionTypes: {
+        root: '/admin/role-manager/permission-types',
+        list: '/admin/role-manager/permission-types/list',
+      },
+      permissions: {
+        root: '/admin/role-manager/permissions',
+        list: '/admin/role-manager/permissions/list',
+      },
+      roles: {
+        root: '/admin/role-manager/roles',
+        list: '/admin/role-manager/roles/list',
+        toId: (id: TId) => `/admin/role-manager/roles/${id}`,
+      },
+    },
+    category: {
+      root: '/admin/category',
+      list: '/admin/category/list',
+    },
   },
 };

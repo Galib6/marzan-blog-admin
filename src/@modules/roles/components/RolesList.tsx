@@ -1,0 +1,163 @@
+import CustomSwitch from '@base/components/CustomSwitch';
+import { Paths, Permissions, Roles } from '@lib/constant';
+import Authorization from '@modules/auth/components/Authorization';
+import { hasAccessPermission } from '@modules/auth/lib/utils/client';
+import type { PaginationProps, TableColumnsType } from 'antd';
+import { Button, Drawer, Form, message, Space, Table } from 'antd';
+import dayjs from 'dayjs';
+import { useRouter } from 'next/navigation';
+import React, { useState } from 'react';
+import { AiFillEdit } from 'react-icons/ai';
+import { useRoleUpdate } from '../lib/hooks';
+import { IRole } from '../lib/interfaces';
+import RolesForm from './RolesForm';
+
+interface IProps {
+  isLoading: boolean;
+  data: IRole[];
+  pagination: PaginationProps;
+}
+
+const RolesList: React.FC<IProps> = ({ isLoading, data, pagination }) => {
+  const router = useRouter();
+  const [messageApi, messageHolder] = message.useMessage();
+  const [formInstance] = Form.useForm();
+  const [updateItem, setUpdateItem] = useState<IRole>(null);
+
+  const roleUpdateFn = useRoleUpdate({
+    config: {
+      onSuccess: (res) => {
+        if (!res.success) {
+          messageApi.error(res.message);
+          return;
+        }
+
+        setUpdateItem(null);
+        messageApi.success(res.message);
+      },
+    },
+  });
+
+  const dataSource = data?.map((elem) => ({
+    key: elem?.id,
+    id: elem?.id,
+    title: elem?.title,
+    isActive: elem?.isActive,
+    createdAt: elem?.createdAt,
+  }));
+
+  const columns: TableColumnsType<(typeof dataSource)[number]> = [
+    {
+      key: 'title',
+      dataIndex: 'title',
+      title: 'Title',
+    },
+    {
+      key: 'createdAt',
+      dataIndex: 'createdAt',
+      title: 'Created At',
+      render: (createdAt) => <p className="min-w-24">{dayjs(createdAt).format('DD-MM-YYYY')}</p>,
+    },
+    ...(hasAccessPermission([Permissions.ROLE_UPDATE])
+      ? [
+          {
+            key: 'isActive',
+            dataIndex: 'isActive',
+            title: 'Active',
+            render: (isActive, record) => {
+              return (
+                <CustomSwitch
+                  disabled={record?.title === Roles.SUPER_ADMIN}
+                  checked={isActive}
+                  onChange={(checked) => {
+                    roleUpdateFn.mutate({
+                      id: record?.id,
+                      data: {
+                        isActive: checked,
+                      },
+                    });
+                  }}
+                />
+              );
+            },
+          },
+        ]
+      : []),
+    ...(hasAccessPermission([Permissions.ROLE_VIEW, Permissions.ROLE_UPDATE])
+      ? [
+          {
+            key: 'id',
+            dataIndex: 'id',
+            title: 'Action',
+            render: (id, record) => {
+              const isDisabled = record?.title === Roles.SUPER_ADMIN;
+
+              return (
+                <Space>
+                  <Authorization allowedAccess={[Permissions.ROLE_VIEW]}>
+                    <Button
+                      type="primary"
+                      ghost
+                      disabled={isDisabled}
+                      onClick={() => {
+                        const path = Paths.admin.roleManager.roles.toId(id);
+                        router.push(path);
+                      }}
+                    >
+                      Edit Permissions
+                    </Button>
+                  </Authorization>
+                  <Authorization allowedAccess={[Permissions.ROLE_UPDATE]}>
+                    <Button
+                      disabled={isDisabled}
+                      type="primary"
+                      onClick={() => {
+                        const item = data?.find((item) => item.id === id);
+                        setUpdateItem(item);
+                      }}
+                    >
+                      <AiFillEdit />
+                    </Button>
+                  </Authorization>
+                </Space>
+              );
+            },
+          },
+        ]
+      : []),
+  ];
+
+  return (
+    <React.Fragment>
+      {messageHolder}
+      <Table
+        loading={isLoading}
+        dataSource={dataSource}
+        columns={columns}
+        pagination={pagination}
+        scroll={{ x: true }}
+      />
+      <Drawer
+        width={450}
+        title={`Update ${updateItem?.title}`}
+        open={!!updateItem?.id}
+        onClose={() => setUpdateItem(null)}
+      >
+        <RolesForm
+          formType="update"
+          form={formInstance}
+          initialValues={{ ...updateItem, isActive: updateItem?.isActive }}
+          isLoading={roleUpdateFn.isPending}
+          onFinish={(values) =>
+            roleUpdateFn.mutate({
+              id: updateItem?.id,
+              data: values,
+            })
+          }
+        />
+      </Drawer>
+    </React.Fragment>
+  );
+};
+
+export default RolesList;

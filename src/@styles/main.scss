@@ -1,0 +1,23 @@
+@forward './core/index.scss';
+@forward './utils/index.scss';
+
+.hidden_scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.designed_scrollbar {
+  &::-webkit-scrollbar {
+    width: 0.25rem;
+    &-track {
+      background-color: var(--color-secondary-500);
+    }
+    &-thumb {
+      background-color: var(--color-primary-500);
+      border-radius: 1rem;
+    }
+  }
+}

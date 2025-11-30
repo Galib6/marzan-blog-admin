@@ -1,42 +1,65 @@
 {
-  "name": "test-maker",
-  "version": "0.1.0",
+  "name": "knowledgebase",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "next dev -p 3020",
+    "dev": "next dev -p 3080 --turbopack",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "format": "prettier --write src/**/*.{js,jsx,ts,tsx,css,scss}"
+    "lint:check": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "prettier:check": "prettier --check --ignore-path .prettierignore .",
+    "prettier:fix": "prettier --write --ignore-path .prettierignore .",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": [
+      "yarn lint:check",
+      "yarn prettier:fix"
+    ],
+    "*.{json,css,scss,md}": [
+      "yarn prettier:fix"
+    ]
   },
   "dependencies": {
-    "@ant-design/pro-components": "^2.6.5",
-    "@tanstack/react-query": "^4.29.25",
-    "@types/node": "20.4.2",
-    "@types/react": "18.2.15",
-    "@types/react-dom": "18.2.7",
-    "antd": "^5.7.1",
-    "antd-img-crop": "^4.12.2",
-    "autoprefixer": "10.4.14",
-    "axios": "^1.4.0",
-    "classnames": "^2.3.2",
-    "dayjs": "^1.11.9",
-    "eslint": "8.45.0",
-    "eslint-config-next": "13.4.10",
-    "jodit": "^4.0.6",
-    "jodit-react": "^1.3.39",
-    "jwt-decode": "^3.1.2",
-    "next": "13.4.10",
-    "postcss": "8.4.26",
-    "react": "18.2.0",
-    "react-copy-to-clipboard": "^5.1.0",
-    "react-dom": "18.2.0",
-    "react-icons": "^4.10.1",
-    "sass": "^1.63.6",
-    "tailwindcss": "3.3.3",
-    "typescript": "5.1.6"
+    "@ant-design/nextjs-registry": "^1.3.0",
+    "@tanstack/react-query": "^5.90.11",
+    "@tanstack/react-virtual": "^3.13.12",
+    "antd": "^6.0.0",
+    "antd-img-crop": "^4.27.0",
+    "axios": "^1.13.2",
+    "clsx": "^2.1.1",
+    "dayjs": "^1.11.19",
+    "jwt-decode": "^4.0.0",
+    "next": "16.0.5",
+    "nextjs-progressbar": "^0.0.16",
+    "react": "19.2.0",
+    "react-dom": "19.2.0",
+    "react-icons": "^5.5.0",
+    "react-intersection-observer": "^10.0.0",
+    "react-virtualized": "^9.22.6",
+    "socket.io-client": "^4.8.1",
+    "tailwind-merge": "^3.4.0"
   },
   "devDependencies": {
-    "prettier": "3.0.0"
+    "@eslint/eslintrc": "^3.3.3",
+    "@tailwindcss/postcss": "^4.1.17",
+    "@tanstack/eslint-plugin-query": "^5.91.2",
+    "@types/node": "^24.10.1",
+    "@types/react": "^19.2.7",
+    "@types/react-dom": "^19.2.3",
+    "@types/react-virtualized": "^9.22.3",
+    "@typescript-eslint/eslint-plugin": "^8.48.0",
+    "@typescript-eslint/parser": "^8.48.0",
+    "eslint": "^9.39.1",
+    "eslint-config-next": "16.0.5",
+    "eslint-plugin-unused-imports": "^4.3.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.7",
+    "prettier": "^3.7.3",
+    "sass": "^1.94.2",
+    "tailwindcss": "^4.1.17",
+    "typescript": "^5.9.3"
   }
 }

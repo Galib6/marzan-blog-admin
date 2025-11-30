@@ -1,0 +1,108 @@
+@use '../utils/mixins.mediaqueries' as *;
+
+$darkBlueColor: #1a237e;
+
+$mobile: 480px;
+$tablet: 768px;
+$laptop: 1024px;
+
+.pdf-container {
+  position: relative;
+  width: 842px;
+  margin: auto;
+  border: 2px solid $darkBlueColor;
+  @include md {
+    border: none;
+  }
+
+  .bar-img {
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    img {
+      width: 100%;
+      height: 160px;
+    }
+  }
+
+  .dot-box {
+    display: grid;
+    grid-template-columns: repeat(4, 0fr);
+    column-gap: 13px;
+    row-gap: 16px;
+    position: absolute;
+    top: 80px;
+    right: 60px;
+
+    .dot-item {
+      width: 5px;
+      height: 5px;
+      border-radius: 100%;
+      background-color: black;
+    }
+  }
+
+  .pdf-content {
+    padding: 0px 100px;
+    margin-top: 200px;
+    margin-bottom: 60px;
+    header {
+      line-height: 38px;
+      h1 {
+        font-size: 28px;
+        color: $darkBlueColor;
+      }
+      p {
+        font-size: 36px;
+        font-weight: 600;
+        color: $darkBlueColor;
+      }
+    }
+
+    .benifit-box-container {
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+      margin-top: 30px;
+
+      .single-box {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 18px 16px;
+        background-color: $darkBlueColor;
+        border-radius: 20px;
+        .box-img {
+          width: 100px;
+          height: 80px;
+          background-color: white;
+          padding: 2px;
+          border-radius: 5px;
+          img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+          }
+        }
+        .box-content {
+          width: 100%;
+          color: white;
+          h2 {
+            font-size: 24px;
+            span {
+              font-weight: 500;
+              color: skyblue;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+// @mixin responsive($size){
+//  @if $size == mobile{
+
+//  }
+// }
